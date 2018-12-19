@@ -16,6 +16,7 @@ include_directories(./include)
 include_directories(${BOOST_HEADER_DIR})
 
 link_directories(./lib)
+link_directories(/usr/local/lib/)
 
 option(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "$ENV{CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64")
