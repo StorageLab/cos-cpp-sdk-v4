@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 CMAKE_policy(SET CMP0015 NEW)
 
+add_definitions(-std=c++0x)
 project(cos-cpp-sdk)
 #SET(BOOST_HEADER_DIR "/root/boost_1_61_0")
 SET(CMAKE_VERBOSE_MAKEFILE  ON)
@@ -10,13 +11,14 @@ find_package(OpenSSL REQUIRED)
 message(${OPENSSL_VERSION})
 
 # 单元测试与覆盖率统计
-OPTION (ENABLE_UNITTEST "Unittest" OFF)
+OPTION (ENABLE_UNITTEST "Unittest" ON)
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0 -g3)
 
 include_directories(./include)
 include_directories(${BOOST_HEADER_DIR})
 
+#link_directories(./lib /root/down/c-ares/lib)
 link_directories(./lib)
-link_directories(/usr/local/lib/)
 
 option(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "$ENV{CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64")
@@ -42,7 +44,8 @@ IF(ENABLE_UNITTEST)
     FILE(COPY config.json DESTINATION ${EXECUTABLE_OUTPUT_PATH}/)
     FILE(COPY testdata DESTINATION ${EXECUTABLE_OUTPUT_PATH}/)
     FILE(COPY unittest/merge_xml_results.py DESTINATION ${EXECUTABLE_OUTPUT_PATH}/)
-    INCLUDE_DIRECTORIES(./include/gtest-1.7.0/include)
+    # INCLUDE_DIRECTORIES(/usr/src/googletest-release-1.8.1/googletest/include/gtest/)
+    INCLUDE_DIRECTORIES(/root/down/googletest-release-1.6.0/include/)
     ADD_SUBDIRECTORY(unittest)
 ENDIF()
 
@@ -51,6 +54,7 @@ add_executable(cos_demo cos_demo.cpp)
 if (__USE_L5)
     MESSAGE("use l5")
     add_definitions(-D__USE_L5)
+#cares
     target_link_libraries(cos_demo cossdk curl ssl crypto rt jsoncpp qos_client stdc++ pthread z boost_system boost_thread)
 ELSE()
     target_link_libraries(cos_demo cossdk curl ssl crypto rt jsoncpp stdc++ pthread z boost_system boost_thread)
